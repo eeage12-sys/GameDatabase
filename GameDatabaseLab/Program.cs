@@ -12,31 +12,41 @@ namespace GameDatabaseLab
             {
                 connection.Open();
 
-                using (SqliteCommand pragma = connection.CreateCommand())
+                using (SqliteCommand command = connection.CreateCommand())
                 {
-                    pragma.CommandText = "PRAGMA foreign_keys = ON;";
-                    pragma.ExecuteNonQuery();
+                    command.CommandText = @"
+UPDATE Item
+SET Price = $price
+WHERE ItemId = $itemId;";
+
+                    command.Parameters.AddWithValue("$price", 150);
+                    command.Parameters.AddWithValue("$itemId", 4);
+
+                    int changedRows = command.ExecuteNonQuery();
+
+                    Console.WriteLine(
+                        changedRows + "건의 가격을 수정했습니다.");
                 }
 
-                try
+                using (SqliteCommand command = connection.CreateCommand())
                 {
-                    using (SqliteCommand command = connection.CreateCommand())
+                    command.CommandText = @"
+SELECT Name, Price
+FROM Item
+WHERE ItemId = $itemId;";
+
+                    command.Parameters.AddWithValue("$itemId", 4);
+
+                    using (SqliteDataReader reader = command.ExecuteReader())
                     {
-                        command.CommandText = @"
-INSERT INTO Inventory (PlayerId, ItemId, Quantity)
-VALUES ($playerId, $itemId, $quantity);";
-
-                        command.Parameters.AddWithValue("$playerId", 1);
-                        command.Parameters.AddWithValue("$itemId", 999);
-                        command.Parameters.AddWithValue("$quantity", 1);
-
-                        command.ExecuteNonQuery();
+                        if (reader.Read())
+                        {
+                            Console.WriteLine(
+                                reader.GetString(0)
+                                + " / 가격: "
+                                + reader.GetInt64(1));
+                        }
                     }
-                }
-                catch (SqliteException e)
-                {
-                    Console.WriteLine("등록 거부됨");
-                    Console.WriteLine(e.Message);
                 }
             }
         }
