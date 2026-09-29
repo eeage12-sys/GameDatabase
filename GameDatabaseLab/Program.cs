@@ -1,65 +1,171 @@
 ﻿using System;
+using System.Collections.Generic;
 using LiteDB;
 
 namespace GameDatabaseLab
 {
-    public class GameLog
+    public class QuestProgress
     {
         public int Id { get; set; }
-        public string EventType { get; set; } = "";
         public int PlayerId { get; set; }
-        public string Message { get; set; } = "";
-        public DateTime OccurredAt { get; set; }
-        public string ClientVersion { get; set; } = "";
+        public string QuestId { get; set; } = "";
+        public int KillCount { get; set; }
+        public int TargetCount { get; set; }
+        public bool IsCompleted { get; set; }
+
+        // 보상 수령 여부
+        public bool IsRewardClaimed { get; set; }
+
+        public List<string> RewardIds { get; set; }
+            = new List<string>();
     }
 
     internal class Program
     {
         private static void Main(string[] args)
         {
-            using (LiteDatabase db = new LiteDatabase("GameLogs.db"))
+            using (LiteDatabase database =
+                   new LiteDatabase("QuestProgress.db"))
             {
-                ILiteCollection<GameLog> logs =
-                    db.GetCollection<GameLog>("logs");
+                ILiteCollection<QuestProgress> quests =
+                    database.GetCollection<QuestProgress>("quests");
 
-                int playerId;
+                quests.EnsureIndex(x => x.PlayerId);
+
+                QuestProgress quest = quests.FindOne(x =>
+                    x.PlayerId == 1 &&
+                    x.QuestId == "GoblinHunt");
+
+                if (quest == null)
+                {
+                    quest = new QuestProgress
+                    {
+                        PlayerId = 1,
+                        QuestId = "GoblinHunt",
+                        TargetCount = 3,
+                        RewardIds = new List<string> { "Potion" },
+                        IsRewardClaimed = false
+                    };
+
+                    quests.Insert(quest);
+                }
+
+                Console.WriteLine("고블린 퀘스트를 불러왔습니다.");
+                PrintQuest(quest);
 
                 while (true)
                 {
-                    Console.Write("조회할 PlayerId를 입력하세요: ");
+                    Console.WriteLine();
+                    Console.Write(
+                        "1: 고블린 한 마리 처치 | " +
+                        "c: 보상 받기 | " +
+                        "r: 초기화 | " +
+                        "q: 종료 > ");
 
                     string input = Console.ReadLine() ?? "";
 
-                    if (int.TryParse(input, out playerId))
+                    // 종료
+                    if (input == "q" || input == "Q")
                     {
                         break;
                     }
 
-                    Console.WriteLine("숫자를 입력해주세요.");
-                }
+                    // 초기화
+                    if (input == "r" || input == "R")
+                    {
+                        quest.KillCount = 0;
+                        quest.IsCompleted = false;
+                        quest.IsRewardClaimed = false;
 
-                Console.WriteLine();
-                Console.WriteLine("플레이어 " + playerId + "의 로그");
+                        quests.Update(quest);
 
-                bool found = false;
+                        Console.WriteLine(
+                            "고블린 퀘스트 진행 상태를 초기화했습니다.");
 
-                foreach (GameLog log in
-                         logs.Find(x => x.PlayerId == playerId))
-                {
-                    found = true;
+                        PrintQuest(quest);
+
+                        continue;
+                    }
+
+                    // 보상 받기
+                    if (input == "c" || input == "C")
+                    {
+                        if (!quest.IsCompleted)
+                        {
+                            Console.WriteLine(
+                                "퀘스트를 완료해야 보상을 받을 수 있습니다.");
+
+                            continue;
+                        }
+
+                        if (quest.IsRewardClaimed)
+                        {
+                            Console.WriteLine(
+                                "이미 보상을 수령했습니다.");
+
+                            continue;
+                        }
+
+                        quest.IsRewardClaimed = true;
+                        quests.Update(quest);
+
+                        Console.WriteLine("보상을 수령했습니다.");
+
+                        Console.WriteLine(
+                            "보상: " +
+                            string.Join(", ", quest.RewardIds));
+
+                        continue;
+                    }
+
+                    // 잘못된 입력
+                    if (input != "1")
+                    {
+                        Console.WriteLine(
+                            "1, c, r 또는 q를 입력하세요.");
+
+                        continue;
+                    }
+
+                    // 이미 완료
+                    if (quest.IsCompleted)
+                    {
+                        Console.WriteLine(
+                            "이미 완료한 퀘스트입니다.");
+
+                        continue;
+                    }
+
+                    // 고블린 처치
+                    quest.KillCount++;
+
+                    quest.IsCompleted =
+                        quest.KillCount >= quest.TargetCount;
+
+                    quests.Update(quest);
 
                     Console.WriteLine(
-                        log.Id + " / "
-                        + log.EventType + " / "
-                        + log.Message + " / "
-                        + log.ClientVersion);
-                }
+                        "고블린을 한 마리 처치했습니다.");
 
-                if (!found)
-                {
-                    Console.WriteLine("해당 플레이어의 로그가 없습니다.");
+                    PrintQuest(quest);
                 }
             }
+        }
+
+        private static void PrintQuest(QuestProgress quest)
+        {
+            Console.WriteLine(
+                "처치 수: " +
+                quest.KillCount + "/" +
+                quest.TargetCount);
+
+            Console.WriteLine(
+                "완료 여부: " +
+                quest.IsCompleted);
+
+            Console.WriteLine(
+                "보상 수령 여부: " +
+                quest.IsRewardClaimed);
         }
     }
 }
