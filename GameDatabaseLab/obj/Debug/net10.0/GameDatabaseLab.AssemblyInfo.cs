@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("GameDatabaseLab")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+28315111b48c4e46fe394f91d71be632e648c6a4")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1f158fbde06bf61dae9855e3c1cc5d9256ac0a5d")]
 [assembly: System.Reflection.AssemblyProductAttribute("GameDatabaseLab")]
 [assembly: System.Reflection.AssemblyTitleAttribute("GameDatabaseLab")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

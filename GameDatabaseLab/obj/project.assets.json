@@ -2,6 +2,19 @@
   "version": 4,
   "targets": {
     "net10.0": {
+      "LiteDB/5.0.21": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/LiteDB.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard2.0/LiteDB.dll": {
+            "related": ".xml"
+          }
+        }
+      },
       "Microsoft.Data.Sqlite/10.0.12": {
         "type": "package",
         "dependencies": {
@@ -171,6 +184,26 @@
     }
   },
   "libraries": {
+    "LiteDB/5.0.21": {
+      "sha512": "ykJ7ffFl7P9YQKR/PLci6zupiLrsSCNkOTiw6OtzntH7d2kCYp5L1+3a/pksKgTEHcJBoPXFtg7VZSGVBseN9w==",
+      "type": "package",
+      "path": "litedb/5.0.21",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "AppVeyorSettings.json",
+        "LICENSE",
+        "icon_64x64.png",
+        "lib/net45/LiteDB.dll",
+        "lib/net45/LiteDB.xml",
+        "lib/netstandard1.3/LiteDB.dll",
+        "lib/netstandard1.3/LiteDB.xml",
+        "lib/netstandard2.0/LiteDB.dll",
+        "lib/netstandard2.0/LiteDB.xml",
+        "litedb.5.0.21.nupkg.sha512",
+        "litedb.nuspec"
+      ]
+    },
     "Microsoft.Data.Sqlite/10.0.12": {
       "sha512": "xUq9xUc653ue7ac2rMfCaf8UQN+U3zS8poWYlugycpvJllplMM0Mk7v/+MM0CTlu9zGvbGML4BPH8YWhrUOfGw==",
       "type": "package",
@@ -292,6 +325,7 @@
   },
   "projectFileDependencyGroups": {
     "net10.0": [
+      "LiteDB >= 5.0.21",
       "Microsoft.Data.Sqlite >= 10.0.12"
     ]
   },
@@ -342,6 +376,10 @@
         "framework": "net10.0",
         "targetAlias": "net10.0",
         "dependencies": {
+          "LiteDB": {
+            "target": "Package",
+            "version": "[5.0.21, )"
+          },
           "Microsoft.Data.Sqlite": {
             "target": "Package",
             "version": "[10.0.12, )"
