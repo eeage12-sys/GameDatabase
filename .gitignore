@@ -1,0 +1,28 @@
+# Unity
+GameDatabaseUnity/Library/
+GameDatabaseUnity/Temp/
+GameDatabaseUnity/Obj/
+GameDatabaseUnity/Logs/
+GameDatabaseUnity/UserSettings/
+GameDatabaseUnity/.vs/
+GameDatabaseUnity/MemoryCaptures/
+
+# Unity generated IDE files
+GameDatabaseUnity/*.csproj
+GameDatabaseUnity/*.sln
+GameDatabaseUnity/*.slnx
+GameDatabaseUnity/.vsconfig
+GameDatabaseUnity/.idea/
+GameDatabaseUnity/.vscode/
+
+# C# / .NET
+GameDatabaseLab/bin/
+GameDatabaseLab/obj/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+
+# Ignore Windows fonts copied for local testing
+GameDatabaseUnity/Assets/Fonts/MALGUN*
